@@ -1,11 +1,12 @@
-<html xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Display Series Details</title>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
-<link href="../static/css/bulma-divider.css" th:href="@{/css/bulma-divider.css}" rel="stylesheet" />
+<link href="../static/css/divider.css" th:href="@{/css/divider.css}"
+	rel="stylesheet" />
 <script defer
 	src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 <style>
@@ -23,7 +24,9 @@
 				<h1 class="title">Champflix</h1>
 				<p class="subtitle">Stream na, ka-Champirata!</p>
 			</div>
-			<div class="astrodivider"><div class="astrodividermask"></div></div>
+			<div class="astrodivider">
+				<div class="astrodividermask"></div>
+			</div>
 		</div>
 	</section>
 	<section class="section hero is-fullheight is-black">
@@ -31,10 +34,14 @@
 		<div class="hero-body">
 			<div class="container">
 				<div th:each="row : ${shows}">
-					<div class="astrodivider"><div class="astrodividermask"></div><span th:text="${row.key}"><!-- <i>&#10038;</i> --></span></div>
+					<div class="astrodivider">
+						<div class="astrodividermask"></div>
+						<span th:text="${row.key}">
+							<!-- <i>&#10038;</i> -->
+						</span>
+					</div>
 					<div class="columns is-multiline">
-						<div th:each="show: ${row.value}"
-							class="column is-one-quarter">
+						<div th:each="show: ${row.value}" class="column is-one-quarter">
 							<div class="card">
 								<div class="card-image">
 									<figure class="image is-4by3">
@@ -51,8 +58,7 @@
                                         </figure>
                                     </div> -->
 										<div class="media-content">
-											<p th:text="${show.title}"
-												class="title is-4 has-text-black">Title</p>
+											<p th:text="${show.title}" class="title is-4 has-text-black">Title</p>
 											<p th:text="${show.genre}"
 												class="subtitle is-6 has-text-danger">Genre</p>
 										</div>

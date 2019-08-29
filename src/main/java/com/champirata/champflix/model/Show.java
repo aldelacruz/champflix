@@ -36,6 +36,9 @@ public class Show {
 	@Column(nullable=true)
 	private String summary;
 	
+	@Column(nullable=true)
+	private String image;
+	
 	
 	public int getId() {
 		return id;
@@ -80,6 +83,13 @@ public class Show {
 	}
 	public void setSummary(String summary) {
 		this.summary = summary;
+	}
+	
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
 	}
 	@Override
 	public int hashCode() {

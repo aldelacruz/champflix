@@ -12,6 +12,8 @@ public enum Genre {
 	YOUNG_ADULT,
 	DRAMA,
 	FANTASY,
-	CRIME
+	CRIME,
+	SITCOM
+	
 
 }

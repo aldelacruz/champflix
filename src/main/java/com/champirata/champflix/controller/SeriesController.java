@@ -37,7 +37,7 @@ public class SeriesController {
 	@GetMapping("/tvseries-genre/{rating}")
 	public   ModelAndView groupByGenreWithRating(@PathVariable double rating) {
 		ModelAndView mav = new ModelAndView();
-        mav.setViewName("seriesByGenreWithRating");
+        mav.setViewName("bycategory");
         mav.addObject("seriesList", champflixSeriesService.groupByGenreWithRating(rating));
 		return mav;
 	}

@@ -7,4 +7,5 @@ INSERT INTO TVSERIES(id,title,rating,genre,channel,grade,language) VALUES
 (6,'Descendants of the Sun','9.3',8,'KBS',1,2),
 (7,'Descendants of the Sun','9.3',8,'KBS',1,2),
 (8,'Descendants of the Sun','9.3',8,'KBS',1,2),
-(9,'Descendants of the Sun','9.3',8,'KBS',1,2);
+(9,'Descendants of the Sun','9.3',8,'KBS',1,2),
+(10,'Descendants of the Sun','9.3',8,'KBS',1,2);

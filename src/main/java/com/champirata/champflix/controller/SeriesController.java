@@ -14,12 +14,7 @@ public class SeriesController {
 	
 	@Autowired
 	ChampflixSeriesDataService champflixSeriesService;
-	
-	/*
-	 * @GetMapping("/tvseries") public List<TVSeries> getAllTVSeries() { return
-	 * champflixSeriesService.getAllSeries(); }
-	 */
-	
+		
 	@GetMapping("/tvseries")
 	public ModelAndView getAllTVSeries() {
 		ModelAndView mav = new ModelAndView();
@@ -27,12 +22,6 @@ public class SeriesController {
         mav.addObject("seriesList", champflixSeriesService.getAllSeries());
 		return mav;
 	}
-	
-	/*
-	 * @GetMapping("/tvseries-genre/{rating}") public Map<Genre, List<TVSeries>>
-	 * groupByGenreWithRating(@PathVariable double rating) { return
-	 * champflixSeriesService.groupByGenreWithRating(rating); }
-	 */
 	
 	@GetMapping("/tvseries-genre/{rating}")
 	public   ModelAndView groupByGenreWithRating(@PathVariable double rating) {
@@ -42,6 +31,4 @@ public class SeriesController {
 		return mav;
 	}
 	
-	
-
 }

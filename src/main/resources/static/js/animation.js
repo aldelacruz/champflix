@@ -18,5 +18,27 @@ var $animation_elements = $('.animation-element');
 			}
 		});
 	}
+
 	$window.on('scroll resize', check_if_in_view);
 	$window.trigger('scroll');
+
+	$(document).ready(function(){
+		var $ratings = $('.rating');
+		$.each($ratings, function () {
+			var $element = $(this);
+			var rating = $element[0].textContent;
+			const highest_rating = 10.0;
+			const mid_low_rating = 3.0;
+			const mid_high_rating = 7.0;
+			if((rating <= highest_rating) && (rating > mid_high_rating)){
+				$element.addClass('has-text-success');
+			}
+			else if ((rating <= mid_high_rating) && (rating > mid_low_rating)){
+				$element.addClass('has-text-warning');
+			}
+			else{
+				$element.addClass('has-text-danger');
+			}
+		});
+
+	});

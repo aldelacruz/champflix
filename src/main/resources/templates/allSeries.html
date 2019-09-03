@@ -8,10 +8,14 @@
 	<link rel="stylesheet" href="styles.css">
 	<link rel="stylesheet"
 		  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/css/bulma-extensions.min.css">
 	<link href="../static/css/divider.css" th:href="@{/css/divider.css}" rel="stylesheet" />
 	<link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" />
+
 	<title>Document</title>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bulma-extensions@6.2.7/dist/js/bulma-extensions.min.js"></script>
 </head>
 <body>
 	<section class="section hero is-black is-fullheight">
@@ -31,7 +35,7 @@
 		<div class="hero-body">
 				<div class="container cf">
 					<div class="columns is-multiline">
-						<div th:each="tvseries : ${seriesList}" class="column is-one-quarter animation-element bounce-up cf">
+						<div th:each="tvseries : ${seriesList}" class="column is-one-quarter is-primary animation-element bounce-up cf">
 							<div class="card subject">
 							<div class="card-image">
 									<figure class="image is-4by3">
@@ -63,7 +67,6 @@
 							</div>
 						</div>
 					</div>
-
 				</div>
 		</div>
 	</section>
@@ -75,6 +78,9 @@
 				</p>
 			</div>
 		</div>
+	</section>
+	<section>
+		<div class="pageloader is-active is-black"><span class="title">Loading</span></div>
 	</section>
 <script src="../js/animation.js"></script>
 </body>

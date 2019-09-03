@@ -41,4 +41,9 @@ var $animation_elements = $('.animation-element');
 			}
 		});
 
+		$(window).load(function() {
+			setTimeout(function () {
+				$('.pageloader').fadeOut();
+			}, 3000);
+		});
 	});

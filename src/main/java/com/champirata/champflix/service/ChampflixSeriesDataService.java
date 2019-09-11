@@ -12,7 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.champirata.champflix.constant.Genre;
+
 import com.champirata.champflix.constant.Language;
+
+import com.champirata.champflix.dataextractor.SeriesReviewExtractor;
+import com.champirata.champflix.dataextractor.SeriesReviewExtractor.SeriesReview;
+
 import com.champirata.champflix.model.TVSeries;
 import com.champirata.champflix.repository.SeriesRepository;
 
@@ -34,6 +39,30 @@ public class ChampflixSeriesDataService {
 				.sorted(Comparator.comparing(TVSeries::getRating).reversed())
 				.collect(Collectors.groupingBy(TVSeries::getGenre));
 	}
+	
+	//Slicing operations
+	//distinct(), limit(), skip()
+	public List<SeriesReview> getTopReviewedSeries(Genre genre){
+		List<SeriesReview> reviews = new ArrayList<>();
+		reviews.addAll(SeriesReviewExtractor.getRatingsFromIMDv(genre));
+		reviews.addAll(SeriesReviewExtractor.getRatingsFromRottenPotatoes(genre));
+		//Print at most 5 DISTINCT TV shows with a rating > 6.0
+		//DB: Select distinct (title) from reviews where rating >= 6.0 limit 0, 5;
+		return reviews.stream()//.filter(r -> r.getRating() >= 6.0)
+		//.distinct()//based on .equals
+		//.peek(r -> System.out.println(r.getTitle()))// a method that peeks into the current element beig processed
+		//.limit(5)// a short circuit operation, aborts the pipeline after 5th element
+		//.skip(5)//skips the first 5 elements, also looks at the first 5 elements, just doesn't pass it down
+		//.limit(3)you can have another limit after skippine elements
+		//.map(r -> r.getTitle()) //just ike filter but returns a stream of diff Object
+		//.forEach(System.out::println);
+		.sorted(Comparator.comparing(SeriesReview::getRating).reversed())
+		.collect(Collectors.toList());
+	}
+	
+	//Matching operations
+	//anyMatch(), allMatch(), nonMatch();//intermidiate operations, returns boolean, all short circuit operations
+	
 	
 	
 	//Slicing methods demo: Get data from 2 show review sites and display the top 10 highly rated drama TV series from both sites combined

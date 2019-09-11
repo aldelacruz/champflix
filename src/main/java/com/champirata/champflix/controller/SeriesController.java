@@ -1,11 +1,14 @@
 package com.champirata.champflix.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.champirata.champflix.constant.Genre;
 import com.champirata.champflix.service.ChampflixSeriesDataService;
 
 
@@ -29,6 +32,14 @@ public class SeriesController {
         mav.setViewName("bycategory");
         mav.addObject("shows", champflixSeriesService.groupByGenreWithRating(rating));
 		return mav;
+	}
+	
+	@GetMapping("/top-rated-by-genre/{genre}")
+	public   ModelAndView getTopReviewedSeries(@PathVariable String genre) {
+		ModelAndView mav = new ModelAndView();
+        mav.setViewName("ratingstable");
+        mav.addObject("shows", champflixSeriesService.getTopReviewedSeries(Genre.DRAMA));
+        return mav;
 	}
 	
 }

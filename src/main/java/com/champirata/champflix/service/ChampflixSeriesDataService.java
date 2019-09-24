@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,6 +124,24 @@ public class ChampflixSeriesDataService {
 	// For example: strings.stream().reduce(()-> new StringBuilder(), (sb, s) ->
 	// sb.append(s), (sb1,sb2)->sb1.append(sb2));
 
+	
+	public Map collectToMap(List<SeriesReviewExtractor.SeriesReview> reviews) {
+		
+		/*
+		 * List<SeriesReview> reviews = new ArrayList<>();
+		 * reviews.addAll(SeriesReviewExtractor.getRatingsFromIMDv(genre));
+		 * reviews.addAll(SeriesReviewExtractor.getRatingsFromRottenPotatoes(genre));
+		 */
+		//HasMap
+		//return reviews.stream().collect(Collectors.toMap(r-> r.getTitle(), r->r, (r1, r2) -> r1.getRating()>r2.getRating()?r1:r2));
+		
+		
+		//returns tree map sorted by key
+		return reviews.stream().collect(Collectors.toMap(SeriesReview::getTitle, Function.identity(), (r1, r2) -> r1.getRating()>r2.getRating()?r1:r2, () -> new TreeMap()));
+	}
+	
+	
+	
 	static void overloadedReductions() {
 		System.out.println("\noverloadedReductions ... ");
 
@@ -160,6 +180,8 @@ public class ChampflixSeriesDataService {
 		
 		
 	}
+	
+	
 	
 	 public static void main(String[] args) {
 		 //overloadedReductions();

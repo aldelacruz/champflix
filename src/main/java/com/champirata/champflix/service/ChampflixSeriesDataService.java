@@ -36,16 +36,23 @@ public class ChampflixSeriesDataService {
 				.sorted(Comparator.comparing(TVSeries::getRating).reversed())
 				.collect(Collectors.groupingBy(TVSeries::getGenre));
 	}
+	
+	private List<SeriesReview> getAllReviews(){
+		List<SeriesReview> reviews = new ArrayList<>();
+		reviews.addAll(SeriesReviewExtractor.getRatingsFromIMDv());
+		reviews.addAll(SeriesReviewExtractor.getRatingsFromRottenPotatoes());
+		return reviews;
+	}
 
 	// Slicing operations
 	// distinct(), limit(), skip()
 	public List<SeriesReview> getTopReviewedSeries(Genre genre) {
-		List<SeriesReview> reviews = new ArrayList<>();
-		reviews.addAll(SeriesReviewExtractor.getRatingsFromIMDv(genre));
-		reviews.addAll(SeriesReviewExtractor.getRatingsFromRottenPotatoes(genre));
+		List<SeriesReview> reviews = getAllReviews();
 		// Print at most 5 DISTINCT TV shows with a rating > 6.0
 		// DB: Select distinct (title) from reviews where rating >= 6.0 limit 0, 5;
-		return reviews.stream()// .filter(r -> r.getRating() >= 6.0)
+		return reviews.stream()
+				.filter(r -> r.getGenre().equals(genre))
+				// .filter(r -> r.getRating() >= 6.0)
 				// .distinct()//based on .equals
 				// .peek(r -> System.out.println(r.getTitle()))// a method that peeks into the
 				// current element beig processed
@@ -53,7 +60,7 @@ public class ChampflixSeriesDataService {
 				// .skip(5)//skips the first 5 elements, also looks at the first 5 elements,
 				// just doesn't pass it down
 				// .limit(3)you can have another limit after skippine elements
-				// .map(r -> r.getTitle()) //just ike filter but returns a stream of diff Object
+				// .map(r -> r.getTitle()) //just like filter but returns a stream of diff Object
 				// .forEach(System.out::println);
 				.sorted(Comparator.comparing(SeriesReview::getRating).reversed())
 				.collect(Collectors.toList());
@@ -93,8 +100,10 @@ public class ChampflixSeriesDataService {
 	// Integer[]{5,1,3,6}).reduce(Integer::sum);
 	// Sample parallelized: Optional<Integer> sum = Arrays.stream(new
 	// Integer[]{5,1,3,6}).parallel.reduce(Integer::sum); //w/o synchronization
-	// Find the highest rated drama series
+	
+	// Find the highest rated series according to the given genre, return a default TVSeries value if none is reduced
 	public TVSeries getHighestRatedByGenre(Genre genre) {
+		
 
 		Optional<TVSeries> series = getAllSeries().stream().filter(s -> s.getGenre().equals(genre))
 				.reduce((s1, s2) -> s1.getRating() >= s2.getRating() ? s1 : s2);
@@ -113,6 +122,16 @@ public class ChampflixSeriesDataService {
 		 * System.out.println("(Imperative) Highest rated Drama: " + result);
 		 */
 	}
+	
+	//Reduce quiz
+	static void reductionQuiz() {
+		String[] grades = {"A","A","B","C"};
+		StringBuilder concat = Arrays.stream(grades)
+				.reduce(new StringBuilder(),(sb1, s) -> sb1.append(s), (sb1, sb2) -> sb1.append(sb2));
+		System.out.println(concat.toString());
+	}
+	
+	
 
 	// Second syntax: T reduce(T identity, BinaryOperator<T> accumulator); if stream
 	// is empty, method will return identity (default value)
@@ -153,7 +172,7 @@ public class ChampflixSeriesDataService {
 		System.out.println("concat1: " + concat1);
 
 		// Single instance of container is used
-		// sb is not threadsafe
+		// sb is not thread-safe
 		// combiner redundantly combines
 		// combiner cannot be null
 		// tip: test for correctness: always test output with parallel stream
@@ -161,24 +180,26 @@ public class ChampflixSeriesDataService {
 				(sb1, sb2) -> sb1.append(sb2));
 		System.out.println("concat2: " + concat2);
 
+		// Not efficient: Each accumulation step creates a new StringBuilder
+		StringBuilder concat3 = Arrays.stream(grades).parallel().reduce(new StringBuilder(),
+				(sb, s) -> new StringBuilder().append(sb).append(s), (sb1, sb2) -> sb1.append(sb2));
+		System.out.println("concat3: " + concat3);
+
 	}
 
 	static void collect() {
 
 		String[] grades = { "A", "A", "B", "C", "D", "E" };
-		//accumulator and combiner are BiConsumer, they don't return anything, they just mutate the container
-		StringBuilder concat3 = Arrays.stream(grades).parallel().collect(() -> new StringBuilder(), (sb, s) -> sb.append(s),
-				(sb1, sb2) -> sb1.append(sb2));
-		StringBuilder concat4 = Arrays.stream(grades).parallel().collect(() -> new StringBuilder(), (sb, s) -> new StringBuilder().append(sb).append(s),
-				(sb1, sb2) -> sb1.append(sb2));		
-		//Simplified version
-		//Collectors is a helper class that performs predefined reductions 
+		// accumulator and combiner are BiConsumer, they don't return anything, they
+		// just mutate the container
+		StringBuilder concat4 = Arrays.stream(grades).parallel().collect(() -> new StringBuilder(),
+				(sb, s) -> sb.append(s), (sb1, sb2) -> sb1.append(sb2));
+		// Simplified version
+		// Collectors is a helper class that performs predefined reductions
 		String concat5 = Arrays.stream(grades).parallel().collect(Collectors.joining());
-		System.out.println("concat3: " + concat3);
 		System.out.println("concat4: " + concat4);
 		System.out.println("concat5: " + concat5);
-		
-		
+
 	}
 	
 	

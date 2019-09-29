@@ -2,10 +2,10 @@ package com.champirata.champflix.constant;
 
 public enum Grade {
 
-	PG,
-	SPG,
-	GP,
-	R,
-	X
+	PG,//0
+	SPG,//1
+	GP,//2
+	R,//3
+	X//4
 	
 }

@@ -2,18 +2,18 @@ package com.champirata.champflix.constant;
 
 public enum Genre {
 	
-	THRILLER,
-	SCI_FI,
-	ACTION,
-	HORROR,
-	MYSTERY,
-	ROMANCE,
-	HISTORICAL,
-	YOUNG_ADULT,
-	DRAMA,
-	FANTASY,
-	CRIME,
-	SITCOM
+	THRILLER,//0
+	SCI_FI,//1
+	ACTION,//2
+	HORROR,//3
+	MYSTERY,//4
+	ROMANCE,//5
+	HISTORICAL,//6
+	YOUNG_ADULT,//7
+	DRAMA,//8
+	FANTASY,//9
+	CRIME,//10
+	SITCOM//11
 	
 
 }

@@ -2,13 +2,12 @@ package com.champirata.champflix.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.champirata.champflix.constant.Genre;
 import com.champirata.champflix.constant.Language;
 import com.champirata.champflix.model.TVSeries;
@@ -29,13 +28,7 @@ public class SeriesController {
 		return mav;
 	}
 	
-	@GetMapping("/tvseries-genre/{rating}")
-	public   ModelAndView groupByGenreWithRating(@PathVariable double rating) {
-		ModelAndView mav = new ModelAndView();
-        mav.setViewName("bycategory");
-        mav.addObject("shows", champflixSeriesService.groupByGenreWithRating(rating));
-		return mav;
-	}
+	
 	
 	//for slice
 	@GetMapping("/top-reviewed-by-genre/{genre}")
@@ -46,17 +39,7 @@ public class SeriesController {
         return mav;
 	}
 	
-	//for reduce
-	@GetMapping("/highest-by-genre/{genre}")
-	public   ModelAndView highestRatedByGenre(@PathVariable String genre) {
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("allSeries");
-		List<TVSeries> series = new ArrayList<>();
-		series.add(champflixSeriesService.getHighestRatedByGenre(Genre.DRAMA));
-		mav.addObject("seriesList", series);
-		return mav;
-		
-	}
+	
 	
 	//for find
 	@GetMapping("/highly-rated-by-language/{language}")
@@ -70,8 +53,32 @@ public class SeriesController {
 	}
 	
 	//for match
-	@GetMapping("/match")
-	public boolean match() {
-		return champflixSeriesService.match(champflixSeriesService.getAllSeries());
+	@GetMapping("/is-child-friendly")
+	public ResponseEntity<?> checkIfChildFriendly() {
+		return ResponseEntity.ok(champflixSeriesService.isChildSafe(champflixSeriesService.getAllSeries()));
 	}
+	
+	
+	//for reduce
+		@GetMapping("/highest-by-genre/{genre}")
+		public   ModelAndView highestRatedByGenre(@PathVariable String genre) {
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("allSeries");
+			List<TVSeries> series = new ArrayList<>();
+			series.add(champflixSeriesService.getHighestRatedByGenre(Genre.DRAMA));
+			mav.addObject("seriesList", series);
+			return mav;
+			
+		}
+	
+	
+	//for collect
+	@GetMapping("/tvseries-genre/{rating}")
+	public   ModelAndView groupByGenreWithRating(@PathVariable double rating) {
+		ModelAndView mav = new ModelAndView();
+        mav.setViewName("bycategory");
+        mav.addObject("shows", champflixSeriesService.groupByGenreWithRating(rating));
+		return mav;
+	}
+	
 }

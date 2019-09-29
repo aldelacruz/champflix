@@ -4,12 +4,23 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.champirata.champflix.constant.Genre;
+import com.champirata.champflix.constant.Grade;
+import com.champirata.champflix.constant.Language;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Dummy class that's supposed to fetch data from web services.
  */
 public class SeriesReviewExtractor {
 
+	@Getter 
+	@Setter 
+	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class SeriesReview {		
 		
 		private String title;	
@@ -17,37 +28,6 @@ public class SeriesReviewExtractor {
 		private String source;
 		private Genre genre;
 		
-		public SeriesReview(String title, double rating,String source, Genre genre) {
-			this.title = title;
-			this.rating = rating;
-			this.source = source;
-			this.genre = genre;
-		}
-		
-		
-		public String getTitle() {
-			return title;
-		}
-		
-		public double getRating() {
-			return rating;
-		}
-		
-		
-		public String getSource() {
-			return source;
-		}
-				
-
-		public Genre getGenre() {
-			return genre;
-		}
-
-
-		public void setGenre(Genre genre) {
-			this.genre = genre;
-		}
-
 
 		@Override
 		public int hashCode() {

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,29 +41,51 @@ public class ChampflixSeriesDataService {
 				"No results found.", "champflix.JPG", "XXX", 0, 0);
 	}
 
-	// Slicing operations
-	// distinct(), limit(), skip()
+	/*
+	 * Slicing operations distinct(), limit(), skip()
+	 */
 	public List<SeriesReview> getTopReviewedSeries(Genre genre) {
 		List<SeriesReview> reviews = getAllReviews();
 		return reviews.stream()
 				// DB: Select distinct (title) from reviews where rating >= 6.0 limit 0, 5;
 				// TODO: Print at most 5 DISTINCT reviews with a rating > 6.0
 				// Your codes here
-				.sorted(Comparator.comparing(SeriesReview::getRating).reversed()).collect(Collectors.toList());
+				.filter(r -> r.getGenre().equals(genre))
+				.sorted(Comparator.comparing(SeriesReview::getRating).reversed())//sorts the elements of the stream based on a given Comparator
+				//.peek(r -> System.out.println("current element: " + r.getTitle())) //a method that peeks into the current element being processed along the stream, intended to use only for debugging
+				.distinct() //bases the distinction on the .equals() method of the object
+				//.skip(5) //skips a specified number of elements, still processes the skipped elements, just does not passed them down the pipeline
+				.limit(5) // short-circuit intermediate operation, after getting the limited number of elements, immediately continues to the next method in the pipeline
+				//.map(seriesReview -> seriesReview.getTitle()) // 				
+				//.forEach(System.out::println); //a terminal stream method that takes a Consumer, to consume the element in the stream, returns void 
+				.collect(Collectors.toList());
+
 	}
 
-	// Matching operations
+	/*
+	 * Matching operations - short circuit operations that evaluate the stream according to a given Predicate implementation
+	 * allMatch - Do all elements match the given predicate?
+	 * anyMatch - Does any of the elements match the given predicate?
+	 * noneMatch - Do none of the elements match the given predicate?
+	 */
 	public boolean isChildSafe(List<TVSeries> series) {
 		// TODO: Provide a simple check if the list does not contain any series that is
 		// rated SPG
-		return true;
+		
+		return series.stream().noneMatch(s->s.getGrade().equals(Grade.SPG));
+		
+	
 	}
 
-	// Finding operations
+	/*
+	 * Finding operations Short circuit operations that returns an Optional that may
+	 * or may not contain the element sought
+	 */
 	public TVSeries find(List<TVSeries> series, Language language) {
 		// TODO: Find at least one Tagalog series that is rated > 6
-		// return TVseries.isPresent() ? TVseries.get() : getDefaultBlankSeries();
-		return null;
+		return series.stream().filter(s -> s.getLanguage().equals(language) && s.getRating() > 6).findAny()
+				//Optional.orElseGet - returns the element if present, invokes the provided Supplier implementation if not
+				.orElseGet(() -> getDefaultBlankSeries());
 	}
 
 	// reduce

@@ -75,6 +75,9 @@ public class StreamsDemo {
 	}
 
 	static void streamPerformanceTest() {
+		
+		//TODO: This is for the intro to parallel streams, just run this to test performance of for-loop, and sequential and parallel streams 
+		
 		for (int i = 0; i < 5000000; i++)
 			myList.add(i);
 		int result = 0;
@@ -103,6 +106,8 @@ public class StreamsDemo {
 	}
 
 	static void streamLazinessTest() throws InterruptedException {
+		
+		//TODO: Run this to test for laziness, ie, the intermediate functions only perform the operations when the terminal operation is evaluated, otherwise they just return a stream of elements
 
 		List<EmployeeReview> employees = new ArrayList<>();
 		/** Creating the employee list **/
@@ -167,6 +172,10 @@ public class StreamsDemo {
 
 	// Reduce quiz
 	static void reductionQuiz() {
+		
+		//TODO: Refactor this method so that only the second overloaded reduce is used, ie, without the combiner,
+		//hint: use an intermediate operation before reduce
+		
 		String[] grades = { "A", "A", "B", "C" };
 		StringBuilder concat = Arrays.stream(grades).reduce(new StringBuilder(), (sb1, s) -> sb1.append(s),
 				(sb1, sb2) -> sb1.append(sb2));
@@ -188,12 +197,19 @@ public class StreamsDemo {
 
 		System.out.println("Second overloaded method: " + concat2);
 
+		//TODO: Show third overloaded method
 		
+		//TODO: Refactor the third overloaded method so it can perform mutable reduction
 
 	}
 
 	// if accumulator mutates, use collect(). Otherwise, use reduce()
 	private static void mutableReduction() {
+		
+		//TODO: Show how mutable reduction is done with collect
+		
+		//TODO: Know the difference between the accumulators of reduce and collect
+		
 		
 		
 	}
@@ -201,16 +217,35 @@ public class StreamsDemo {
 	
 	private static void collectToCollection(List<EmployeeReview> employees) {
 		
+		//TODO: Collect employee reviews to a List with employees with score > 7.0
 		
+		//TODO: Collect it to a Set
+		
+		//TODO: Collect it to a TreeSet
 		
 	}
 	
 	private static void collectToMap(List<EmployeeReview> employees) {
 		
+		//TODO: Collect the reviews from the Manager to a simple Map with Employee Id as key and the EmployeeReview as value
 		
+		//TODO:Collect the combined reviews from the Manager and the TL combined to a Map with Employee Id as key and EmployeeReview as value, choose the review with the higher score as map's value
 		
+		//TODO: Collect the combined reviews to a treeMap using a Comparator that compares according to higher score
 		
-	}
+		//TODO: Collect to a map with salaryGrade as key and a list of EmployeeReviews grouped according to Employee salary grade
+		
+		//TODO: Collect to a Map with SalaryGrade as key and another Map as value, the value containing the reviewer as key, and a list of the EmployeeReview that the reviewer did as value
+		
+		//TODO: Collect to Map with Employee name as key, and the average score from the TL and Manager as value
+		
+		//TODO: Partition the averaged EmployeeReviews to those who will get CIRP (ave > 8) and those who will not (ave < 8)
+		
+				
+	}	
+	
+	
+	
 	
 	
 	

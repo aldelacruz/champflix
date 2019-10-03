@@ -89,8 +89,16 @@ public class ChampflixSeriesDataService {
 
 	// reduce
 	public TVSeries getHighestRatedByGenre(Genre genre) {
-		// TODO: Refactor this imperative method to a declarative one using Streams
-		TVSeries result = null;
+		
+		
+		// TODO: Refactor this imperative method to a declarative one using Streams		
+		return getAllSeries().stream().filter(s -> s.getGenre().equals(genre))
+				.reduce((s1, s2) -> s1.getRating() >= s2.getRating() ? s1 : s2)
+				.orElseGet(() -> getDefaultBlankSeries());
+		 
+		
+		/*Imperative:
+		 * TVSeries result = null;
 		List<TVSeries> series = getAllSeries();
 		for (TVSeries TVseries : series) {
 			if (result == null) {
@@ -106,14 +114,19 @@ public class ChampflixSeriesDataService {
 		if (result == null) {
 			result = getDefaultBlankSeries();
 		}
-		return result;
+		return result;*/
 	}
 
 	// collect using Collectors
 	public Map<Genre, List<TVSeries>> groupByGenreWithRating(double rating) {
 		// TODO: Refactor this imperative method to a declarative one using Streams,
-		// sort each list in the map in desc rating manner
+		// sort each list in the map in desc rating manner	
 		List<TVSeries> series = getAllSeries();
+		return series.parallelStream().filter(tvseries -> tvseries.getRating() > rating)
+				.sorted(Comparator.comparing(TVSeries::getRating).reversed())
+				.collect(Collectors.groupingBy(tvseries -> tvseries.getGenre()));
+
+		/* Imperative:
 		Map<Genre, List<TVSeries>> seriesByGenre = new HashMap<>();
 		for (TVSeries tvSeries : series) {
 			if (tvSeries.getRating() >= rating) {
@@ -126,7 +139,8 @@ public class ChampflixSeriesDataService {
 				seriesList.add(tvSeries);
 			}
 		}
-		return seriesByGenre;
+		return seriesByGenre;*/
+
 	}
 
 }

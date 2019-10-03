@@ -77,12 +77,15 @@ public class StreamsDemo {
 	static void streamPerformanceTest() {
 		
 		//TODO: This is for the intro to parallel streams, just run this to test performance of for-loop, and sequential and parallel streams 
-		
+		//For reference on why for-loops would e faster: https://jaxenter.com/java-performance-tutorial-how-fast-are-the-java-8-streams-118830.html
 		for (int i = 0; i < 5000000; i++)
 			myList.add(i);
 		int result = 0;
+
+		
 		long loopStartTime = System.currentTimeMillis();
 
+		
 		for (int i : myList) {
 			if (i % 2 == 0)
 				result += i;
@@ -103,6 +106,17 @@ public class StreamsDemo {
 
 		long parallelStreamEndTime = System.currentTimeMillis();
 		System.out.println("Parallel Stream total Time = " + (parallelStreamEndTime - parallelStreamStartTime));
+	
+		/*
+		 * Do remember, Parallel Streams must be used only with stateless,
+		 * non-interfering, and associative operations i.e.
+		 * 
+		 * A stateless operation is an operation in which the state of one element does
+		 * not affect another element A non-interfering operation is an operation in
+		 * which data source is not affected An associative operation is an operation in
+		 * which the result is not affected by the order of operands
+		 */
+		
 	}
 
 	static void streamLazinessTest() throws InterruptedException {
@@ -130,6 +144,7 @@ public class StreamsDemo {
 		 * Terminal operation on the stream and it will invoke the Intermediate
 		 * Operations filter and map
 		 **/
+		employees.add(new EmployeeReview(10,"Emp_10"));
 		employeeNameStreams.collect(Collectors.toList());
 	}
 
@@ -177,14 +192,16 @@ public class StreamsDemo {
 		//hint: use an intermediate operation before reduce
 		
 		String[] grades = { "A", "A", "B", "C" };
-		StringBuilder concat = Arrays.stream(grades).reduce(new StringBuilder(), (sb1, s) -> sb1.append(s),
-				(sb1, sb2) -> sb1.append(sb2));
+		StringBuilder concat = Arrays.stream(grades)
+				//answer: map the element to turn it to a StringBuilder
+				.map(s-> new StringBuilder(s))
+				.reduce(new StringBuilder(), (sb1, sb2) -> sb1.append(sb2));
 		System.out.println(concat.toString());
 	}
 
 
 	// Overloaded reduction operations
-	private void overloadedReductions() {
+	private static void overloadedReductions() {
 		String[] grades = { "A", "A", "B", "C", "D", "E" };
 		// takes a BinaryOperator and returns an Optional of the value, if any.
 		Optional<String> concat1 = Arrays.stream(grades).reduce((s1, s2) -> s1 + s2);
@@ -198,8 +215,19 @@ public class StreamsDemo {
 		System.out.println("Second overloaded method: " + concat2);
 
 		//TODO: Show third overloaded method
+		// takes 3 parameters: an identity, accumulator, and a combiner
+		//Works with a sequential stream, but not with a parallel stream because StringBuilder is not threadsafe,
+		//and reduce should only be used for immutable reduction
+		StringBuilder concat3 = Arrays.stream(grades).parallel()
+				.reduce(new StringBuilder(), (sb, s) -> sb.append(s),
+				(sb1, sb2) -> sb1.append(sb2));
+		System.out.println("Third overloaded method: " + concat3);
 		
-		//TODO: Refactor the third overloaded method so it can perform mutable reduction
+		//TODO: Refactor the third overloaded method so it could work on a parallel stream
+		StringBuilder concat4 = Arrays.stream(grades).parallel().reduce(new StringBuilder(),
+				(sb, s) -> new StringBuilder().append(sb).append(s), (sb1, sb2) -> sb1.append(sb2));
+		System.out.println("Parallel reduction: " + concat4);
+		
 
 	}
 
@@ -207,8 +235,16 @@ public class StreamsDemo {
 	private static void mutableReduction() {
 		
 		//TODO: Show how mutable reduction is done with collect
+		String[] grades = { "A", "A", "B", "C", "D", "E" };
+		StringBuilder concat3 = Arrays.stream(grades).parallel()
+				.collect(StringBuilder::new, StringBuilder::append,
+						StringBuilder::append);
+		System.out.println("Collect: " + concat3);
+		
 		
 		//TODO: Know the difference between the accumulators of reduce and collect
+			//for reduce, it's a BiFunction that takes 2 parameters and returns an object of one of the type parameters
+			//for collect. it's a BiConsumer that mutates the element container
 		
 		
 		
@@ -216,31 +252,100 @@ public class StreamsDemo {
 	
 	
 	private static void collectToCollection(List<EmployeeReview> employees) {
-		
-		//TODO: Collect employee reviews to a List with employees with score > 7.0
-		
-		//TODO: Collect it to a Set
-		
-		//TODO: Collect it to a TreeSet
-		
+
+		// TODO: Collect employee reviews to a List with employees with score > 7.0
+		List<EmployeeReview> list1 = employees.stream().filter(b -> b.getScore() >= 7.0).distinct()
+				// collect with three params: container, accumulator, and combiner
+				/*
+				  .collect(() -> new ArrayList<EmployeeReview>(), (a,t) -> a.add(t), (a1, a2)
+				  -> a1.addAll(a2));
+				 */
+				// collect with one param: a Collector implementation provided by Collectors
+				.collect(Collectors.toList());
+		System.out.println("set1: " + list1);
+
+		// TODO: Collect it to a Set
+		Set<EmployeeReview> set1 = employees.stream()
+				// set is already distinct
+				// hashCode and equals should be implemented for object
+				.filter(b -> b.getScore() >= 7.0).collect(Collectors.toSet());
+
+		System.out.println("set1: " + set1);
+		// TODO: Collect it to a TreeSet
+		// sorted, so employee should extend Comparable and implement compareTo
+		TreeSet<EmployeeReview> tree1 = employees.stream().filter(b -> b.getScore() >= 7.0)
+				// for toCollection, provide a supplier for the needed Collection
+				.collect(Collectors.toCollection(() -> new TreeSet<EmployeeReview>()));
+		System.out.println("tree1: " + tree1);
+
 	}
 	
 	private static void collectToMap(List<EmployeeReview> employees) {
 		
 		//TODO: Collect the reviews from the Manager to a simple Map with Employee Id as key and the EmployeeReview as value
+		//use for simple key - value pairs, without expecting collisions
+		Map<Integer, EmployeeReview> simpleKVMap = getRatingsFromManager().stream()
+				.collect(Collectors.toMap(e -> e.getId(), e -> e));
 		
-		//TODO:Collect the combined reviews from the Manager and the TL combined to a Map with Employee Id as key and EmployeeReview as value, choose the review with the higher score as map's value
+		for (Entry<Integer, EmployeeReview> entry : simpleKVMap.entrySet()) {
+			System.out.println("ID: " + entry.getKey() + ", EmployeeReview: " + entry.getValue());
+		}
 		
-		//TODO: Collect the combined reviews to a treeMap using a Comparator that compares according to higher score
+		//TODO:Collect the combined reviews from the Manager and the TL combined to a Map with Employee Id as key and EmployeeReview as value, choose the review with the higher score as map's value		
+		Map<Integer, EmployeeReview> mapWithColission = getRatingsFromManager().stream()
+				// to Map with collision resolution parameter
+				.collect(
+						Collectors.toMap(e -> e.getId(), e -> e, (e1, e2) -> e1.getScore() >= e2.getScore() ? e1 : e2));
+
+		for (Entry<Integer, EmployeeReview> entry : mapWithColission.entrySet()) {
+			System.out.println("ID: " + entry.getKey() + ", EmployeeReview: " + entry.getValue());
+		}
+				
+				
+		//TODO: Collect the combined reviews to a treeMap using a Comparator that compares according to higher score		
+		Map<Integer, EmployeeReview> treeMap = employees.stream().collect(Collectors.toMap(EmployeeReview::getId,
+				Function.identity(), BinaryOperator.maxBy(Comparator.comparingDouble(EmployeeReview::getScore))));
+
+		for (Entry<Integer, EmployeeReview> entry : treeMap.entrySet()) {
+			System.out.println("ID: " + entry.getKey() + ", EmployeeReview: " + entry.getValue());
+		}
+		 
 		
 		//TODO: Collect to a map with salaryGrade as key and a list of EmployeeReviews grouped according to Employee salary grade
+		Map<SalaryGrade, List<EmployeeReview>> mapBySalaryGrade = treeMap.values().parallelStream()
+				.collect(Collectors.groupingBy(e -> e.getSalaryGrade()));
+
+		for (Entry<SalaryGrade, List<EmployeeReview>> entry : mapBySalaryGrade.entrySet()) {
+			System.out.println("\nSalaryGrade: " + entry.getKey());
+			for (EmployeeReview b : entry.getValue()) {
+				System.out.println(b);
+			}
+		}
+		 
 		
-		//TODO: Collect to a Map with SalaryGrade as key and another Map as value, the value containing the reviewer as key, and a list of the EmployeeReview that the reviewer did as value
-		
+		//TODO: Collect to a Map with SalaryGrade as key and another Map as value, the value containing the reviewer as key, and a list of the EmployeeReview that the reviewer did as value		
+		Map<SalaryGrade, Map<String, List<EmployeeReview>>> perfEvalMap = employees.stream().collect(Collectors
+				.groupingBy(EmployeeReview::getSalaryGrade, Collectors.groupingBy(EmployeeReview::getReviewer)));
+
+		for (Entry<SalaryGrade, Map<String, List<EmployeeReview>>> entry : perfEvalMap.entrySet()) {
+			System.out.println("\nSalary Grade: " + entry.getKey());
+			for (Entry<String, List<EmployeeReview>> perfEval : entry.getValue().entrySet()) {
+				System.out.println("\nReviewer: " + perfEval.getKey());
+				System.out.println("\nEmployees: " + perfEval.getValue());
+			}
+			;
+		}
+
 		//TODO: Collect to Map with Employee name as key, and the average score from the TL and Manager as value
-		
+		Map<String, Double> employeeAverageScore = employees.stream()
+				.collect(Collectors.groupingBy(e -> e.getName(), Collectors.averagingDouble(e -> e.getScore())));
+		System.out.println(employeeAverageScore);
+				
 		//TODO: Partition the averaged EmployeeReviews to those who will get CIRP (ave > 8) and those who will not (ave < 8)
-		
+		Map<Boolean, Map<String, Double>> result = employeeAverageScore.entrySet()
+				.stream().collect(Collectors.partitioningBy(entry -> entry.getValue() >= 8.0,
+						Collectors.toMap(Entry::getKey, Entry::getValue)));
+		System.out.println(result);
 				
 	}	
 	
@@ -306,7 +411,6 @@ public class StreamsDemo {
 	public static void main(String[] args) {
 		
 		collectToMap(getRatingsFromSuperiors());
-		
 	}
 	
 	
